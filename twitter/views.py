@@ -25,6 +25,11 @@ def home(request):
 		profiles = Profile.objects.all()
 		tweets = Tweet.objects.all().order_by("-created_at")
 		return render(request, 'home.html', {"tweets":tweets, "profiles": profiles})
+	
+def explore(request):	
+	profiles = Profile.objects.all()
+	tweets = Tweet.objects.all().order_by("-created_at")
+	return render(request, 'explore.html', {"tweets":tweets, "profiles": profiles})
 
 
 def profile_list(request):
@@ -142,3 +147,39 @@ def tweet_like(request, pk):
 	else:
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
 		return redirect('home')
+	
+
+def update_tweet(request, pk):
+	if request.user.is_authenticated:
+		tweet = get_object_or_404(Tweet, id=pk)
+
+		if request.method == "POST":
+			form = TweetForm(request.POST, instance=tweet)
+			if form.is_valid():
+				form.save()
+				messages.success(request, ("Your Tweet Has Been Updated!"))
+				return redirect('profile')
+		
+	else:
+		messages.success(request, ("You Must Be Logged In To View That Page..."))
+		return redirect('profile')
+
+@login_required
+def delete_tweet(request, pk):
+	if request.user.is_authenticated:
+		tweet = get_object_or_404(Tweet, pk=pk)
+		if tweet.user == request.user:
+			tweet.delete()
+			messages.success(request, ("Your Tweet Has Been Deleted!"))
+			return redirect('home')
+		else:
+			messages.success(request, ("You Must Be.."))
+			return redirect('home')
+
+	else:
+		messages.success(request, ("You Must Be Logged In To View That Page..."))
+		return redirect('home')
+
+		
+
+
