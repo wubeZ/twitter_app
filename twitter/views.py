@@ -209,6 +209,9 @@ def search(request):
 		if request.method == "POST":
 			query = request.POST['username']
 			if query:
+				if query[0] == '#':
+					query = query[1:]
+					return redirect('search_hashtag', hashtag=query)
 				users = User.objects.filter(username__icontains=query)
 				return render(request, 'search.html', {'users': users })
 			else:
@@ -217,3 +220,16 @@ def search(request):
 	else:
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
 		return redirect('home')
+	
+def search_by_hashtag(request, hashtag):
+    try:
+        tag = Hashtag.objects.get(name=hashtag)
+    except Hashtag.DoesNotExist:
+        tag = None
+    
+    if tag:
+        tweets = tag.tweets.all().order_by('-created_at')
+    else:
+        tweets = []
+    
+    return render(request, 'search_hashtag.html', {'tweets': tweets, 'hashtag': hashtag})

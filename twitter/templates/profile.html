@@ -52,6 +52,11 @@
 			</div>
 			<div class="col-12 d-flex flex-column align-items-start pt-1" style="padding-left: 70px">
 				{{ tweet.body }}<br/>
+				<ul class="breadcrumb" style="--bs-breadcrumb-divider: '';">
+					{% for hashtag in tweet.hashtags.all %}
+					  <li class="breadcrumb-item"> #{{ hashtag.name }}</li>
+					{% endfor %}
+				  </ul><br/>
 				<small class="text-muted">
 					{% if tweet.tweet_image %}
 						<div class="col-12">

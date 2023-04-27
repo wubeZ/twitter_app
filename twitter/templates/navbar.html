@@ -30,7 +30,7 @@
       <div class="searchbox" style=" align-items: flex-end;">
         <form class="d-flex" method="POST" action="{% url 'search' %}" role="search">
           {% csrf_token %}
-          <input class="form-control me-2" type="search" placeholder="username" aria-label="Search" name = "username">
+          <input class="form-control me-2" type="search" placeholder="Search Twitter" aria-label="Search" name = "username">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 

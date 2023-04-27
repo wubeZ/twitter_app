@@ -15,4 +15,5 @@ urlpatterns = [
     path('tweet_update/<int:pk>', views.update_tweet, name ="tweet_update"),
     path('tweet_delete/<int:pk>', views.delete_tweet, name ="tweet_delete"),
     path('search/',  views.search, name="search"),
+    path('search_hashtag/<str:hashtag>',  views.search_by_hashtag, name="search_hashtag"),
 ]
