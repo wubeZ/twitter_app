@@ -19,6 +19,7 @@ This app currently supports the following features:
 - Liking and unliking tweets
 - View a timeline of tweets from users you are following
 - View a user profile with their tweets
+- Search user by username
 
 ## Screenshots
 
