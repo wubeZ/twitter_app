@@ -18,14 +18,24 @@ class TweetForm(forms.ModelForm):
 			attrs={
 			"placeholder": "What's is Happening ? ",
 			"class":"form-control",
+			"rows": "3",
 			}
 			),
 			label="",
 		)
+	hashtags = forms.CharField(required=False, 
+        widget=forms.widgets.TextInput(
+            attrs={
+            "placeholder": "Add Hashtags (comma-separated)",
+            "class":"form-control",
+            }
+            ),
+            label="",
+        )
 
 	class Meta:
 		model = Tweet
-		exclude = ("user", "likes",)
+		exclude = ("user", "likes","hashtags",)
 
 
 class SignUpForm(UserCreationForm):

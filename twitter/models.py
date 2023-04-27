@@ -12,6 +12,7 @@ class Tweet(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	likes = models.ManyToManyField(User, related_name="tweet_like", blank=True)
 	tweet_image = models.ImageField(null=True, blank=True, upload_to="images/")
+	hashtags = models.ManyToManyField('Hashtag', related_name='tweets', blank=True)
 
 
 	# Keep track or count of likes
@@ -54,6 +55,17 @@ def create_profile(sender, instance, created, **kwargs):
 		user_profile.save()
 
 post_save.connect(create_profile, sender=User)
+
+
+class Hashtag(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
 
 
 

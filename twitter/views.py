@@ -1,12 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Profile, Tweet
+from .models import Profile, Tweet,  Hashtag
 from .forms import TweetForm, SignUpForm, ProfilePicForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
+
+
+
+def clean_hashtag(hashtags):
+	hashtags_list = []
+	for hashtag in hashtags.split(","):
+		hashtag = hashtag.strip()
+		if hashtag.startswith("#"):
+			hashtag = hashtag[1:]
+		hashtag = hashtag.lower()
+		hashtags_list.append(hashtag)
+
+	return hashtags_list
+
 
 def home(request):
 	if request.user.is_authenticated:
@@ -15,7 +29,13 @@ def home(request):
 			if form.is_valid():
 				tweet = form.save(commit=False)
 				tweet.user = request.user
+				# Add hashtags to tweet
+				hashtags = form.cleaned_data.get('hashtags')
+				hashtags = clean_hashtag(hashtags)
 				tweet.save()
+				for hashtag in hashtags:
+					tag, created = Hashtag.objects.get_or_create(name=hashtag)
+					tweet.hashtags.add(tag)
 				messages.success(request, ("Your Tweet Has Been Posted!"))
 				return redirect('home')
 		profiles = Profile.objects.exclude(user=request.user)
@@ -197,4 +217,3 @@ def search(request):
 	else:
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
 		return redirect('home')
-
