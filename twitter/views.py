@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 def home(request):
 	if request.user.is_authenticated:
-		form = TweetForm(request.POST or None)
+		form = TweetForm(request.POST or None, request.FILES or None)
 		if request.method == "POST":
 			if form.is_valid():
 				tweet = form.save(commit=False)
@@ -118,14 +118,14 @@ def update_user(request):
 		# Get Forms
 		user_form = SignUpForm(request.POST or None, request.FILES or None, instance=current_user)
 		profile_form = ProfilePicForm(request.POST or None, request.FILES or None, instance=profile_user)
-		if user_form.is_valid() and profile_form.is_valid():
-			user_form.save()
-			profile_form.save()
-
-			login(request, current_user)
-			messages.success(request, ("Your Profile Has Been Updated!"))
-			return redirect('home')
-
+		if request.method == "POST":
+			if user_form.is_valid() and profile_form.is_valid():
+				user_form.save()
+				profile_form.save()
+				login(request, current_user)
+				messages.success(request, ("Your Profile Has Been Updated!"))
+				return redirect('home')
+			
 		return render(request, "update_user.html", {'user_form':user_form, 'profile_form':profile_form})
 	else:
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
@@ -164,22 +164,37 @@ def update_tweet(request, pk):
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
 		return redirect('profile')
 
-@login_required
+
 def delete_tweet(request, pk):
+	tweet = get_object_or_404(Tweet, pk=pk)
+	user = tweet.user.profile.user.id
+	profile = Profile.objects.get(user_id=user)
+	
 	if request.user.is_authenticated:
-		tweet = get_object_or_404(Tweet, pk=pk)
 		if tweet.user == request.user:
 			tweet.delete()
+			tweets = Tweet.objects.filter(user_id = user).order_by("-created_at")
 			messages.success(request, ("Your Tweet Has Been Deleted!"))
-			return redirect('home')
+			return render(request, "profile.html", {"profile":profile, "tweets":tweets})
 		else:
-			messages.success(request, ("You Must Be.."))
-			return redirect('home')
+			messages.success(request, ("You Must Be A Valid User"))
+			return render(request, "profile.html", {"profile":profile, "tweets":tweets})
 
 	else:
 		messages.success(request, ("You Must Be Logged In To View That Page..."))
 		return redirect('home')
-
 		
-
+def search(request):
+	if request.user.is_authenticated:
+		if request.method == "POST":
+			query = request.POST['username']
+			if query:
+				users = User.objects.filter(username__icontains=query)
+				return render(request, 'search.html', {'users': users })
+			else:
+				return render(request, "search.html", {})
+		return redirect('home')
+	else:
+		messages.success(request, ("You Must Be Logged In To View That Page..."))
+		return redirect('home')
 
