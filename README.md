@@ -20,6 +20,7 @@ This app currently supports the following features:
 - View a timeline of tweets from users you are following
 - View a user profile with their tweets
 - Search user by username
+- Search tweet by hashtag
 
 ## Screenshots
 
