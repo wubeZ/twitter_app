@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+    <h1 class="text-center">Search Result</h1>
+    <hr>
+    {% if users %}
+
+    <div class="card-body">
+        <p class="card-text m-0">
+            {% for user in users %}
+
+            <a href="{% url 'profile' user.id %}" class="fw-bold d-flex btn">
+                {% if user.profile.profile_image %}
+                <img src="{{ user.profile.profile_image.url }}"  alt="{{ user.username }}" style="width: 50px; height: 50px; border: 1px solid rgb(41, 39, 39);" class="rounded-circle" >
+                {% else %}
+                <img src="{% static 'images/default_profile_pic.png' %}" alt="{{ user.username }}" style="width: 50px; height: 50px; border: 1px solid rgb(41, 39, 39);" class="rounded-circle">	
+                {% endif %}
+                 <i style="margin: 10px 0px 0px 10px;">{{user}}</i>
+
+            </a>
+            <hr style="margin: 0px;">
+            {% endfor %}
+        </p>
+    </div>
+
+
+    <br /> <br />
+
+
+    {% else %}
+
+    <h1>No Result</h1>
+    {% endif %}
+
+</div>
+{%endblock%}

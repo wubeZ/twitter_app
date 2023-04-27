@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{% if profile %}
+
+	<div class="text-center">
+		<div class="row">
+			<div class="col-md-8">
+				
+				<h1>{{ profile.user.first_name }} {{profile.user.last_name }}</h1>
+
+				<section class="twitterprofile">
+					<div class="headerprofileimage">
+						<img src="https://res.cloudinary.com/dowrygm9b/image/upload/v1570267399/laptop-3174729_yiprzu.jpg" alt="header" id="headerimage">
+						{% if profile.profile_image %}
+							<img src="{{ profile.profile_image.url }}"  alt="{{ profile.user.username }}" id="profilepic" >
+							{% else %}
+							<img src="{% static 'images/default_profile_pic.png' %}" alt="{{ profile.user.username }}" id="profilepic">	
+							{% endif %}
+						
+						{% if request.user.id == profile.user.id %}
+						<div class="editprofile me-5" style="z-index: 100 !important;"><a href="{% url 'update_user' %}">Edit Profile</a></div>
+						{% endif %}
+					</div>
+					<div class="bio">
+						<p>{{ profile.user.bio}}</p>
+					</div>
+				</section>
+
+				<br><hr><br/>
+
+				{% if tweets %}
+					{% for tweet in tweets %}
+
+			<div class="alert alert-dark" style="width: 100%; background-color: rgb(240, 240, 240);" role="alert" >
+	<div class="container" style="width: 100%; ">
+		<div class="row">
+			<div class="col-12 d-flex">
+				{% if profile.profile_image %}
+				<img src="{{ profile.profile_image.url }}" width=40 height=40 class="rounded-circle" alt="{{ profile.user.username }}">
+
+				{% else %}
+				<img src="{% static 'images/default_profile_pic.png' %}" width=40 height=40 class="rounded-circle" alt="{{ profile.user.username }}">	
+				{% endif %}
+				<div class="mx-3 justify-content-start align-items-start">
+					{{tweet.user.first_name}} {{tweet.user.last_name}}
+					<small class="muted">
+						@{{ tweet.user.username }} - ({{ tweet.created_at}})
+					</small>
+				</div>
+			</div>
+			<div class="col-12 d-flex flex-column align-items-start pt-1" style="padding-left: 70px">
+				{{ tweet.body }}<br/>
+				<small class="text-muted">
+					{% if tweet.tweet_image %}
+						<div class="col-12">
+							<img src="{{ tweet.tweet_image.url }}" style="width: 100%; height: 200px; padding-left: 20px"/>
+						</div>
+					{% endif %}	
+				</small>
+				<div class="col-md-8">
+					{% if user in tweet.likes.all %}
+					<a href="{% url 'tweet_like' tweet.id %}"><i class="fa-solid fa-heart" style='color:red'></i></a>
+					{% else %}
+					<a href="{% url 'tweet_like' tweet.id %}"><i class="fa fa-heart-o" style="color:red"></i></a>
+					{% endif %}
+					- {{ tweet.number_of_likes }}
+					<div class="flex" style="width: 100%">
+						<a href="{% url 'tweet_delete' tweet.id %}"><button class="btn btn-danger mt-2"> delete</button> </a>
+					</div>
+				</div>
+							
+						</div><br/><br/>
+			</div>
+		</div>
+	</div>
+
+					{% endfor %}
+				{% endif %}
+			</div>
+			
+	<div class="col-md-4 ">
+				<br/><br/>
+				<br/><br/><br/>
+
+				<div class="card" >
+  <h5 class="card-header">Follows</h5>
+  <div class="card-body">
+    
+    <p class="card-text">
+    		{% for following in profile.follows.all %}
+				<a href="{% url 'profile' following.user.id %}">@{{ following }}</a><br/>
+
+			{% endfor %}
+
+    </p>
+    
+  </div>
+</div>
+			
+			
+
+			<br/><br/>
+
+			<div class="card">
+  <h5 class="card-header">Followed By</h5>
+  <div class="card-body">
+    
+    <p class="card-text">
+    	{% for following in profile.followed_by.all %}
+				<a href="{% url 'profile' following.user.id %}">@{{ following }}</a><br/>
+			{% endfor %}
+
+    </p>
+    
+  </div>
+</div>
+<br/>
+
+<div class="buttons">
+	
+	<form method=POST>
+	{% csrf_token %}
+	{% if profile in user.profile.follows.all %}
+		 <button class="btn btn-outline-danger" name="follow" value="unfollow" type="submit">
+			 Unfollow @{{ profile.user.username|lower}}
+		 </button>
+	
+	{% else %}
+		<button class="btn btn-outline-success" name="follow" value="follow" type="submit">
+			 Follow @{{ profile.user.username|lower}}
+		 </button>
+	
+	{% endif %}
+	
+	</form>
+
+</div>
+
+<br/>
+			</div>
+		</div>
+	</div>
+
+	<style>
+
+	.headerprofileimage {
+    	margin-top: 10px;
+		margin-left: 100px;
+		margin-right: 400px;
+    	position: relative;
+		right: 50px;
+		min-width: 750px;
+	}
+	.editprofile {
+    margin-top: 5px;
+    /* float: right; */
+	margin-left: 400px;
+	width: 100px;
+    border: 1px solid rgb(155, 157, 160);
+    border-radius: 10px;
+    padding: 5px;
+	text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+	z-index: 2000;
+    /* margin-left: 1500px; */
+}
+
+.bio {
+    margin-top: 55px;
+    margin-left: 20px;
+    line-height: 40px;
+    font-size: 15px;
+}
+#profilepic {
+    border-radius: 50%;
+    width: 120px;
+  height:120px;
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    border: 4px solid rgb(21, 32, 43);
+}
+.editprofile a{
+	list-style: none;
+    background-color: white;
+	text-decoration: none;
+}
+#headerimage {
+    width: 500px;
+	margin-right: 150px;
+  height:100px;
+}
+
+.card{
+	margin-left: 70px;
+}
+.buttons{
+	margin-left: 60px;
+}
+
+	</style>
+
+{% endif %}
+
+{% endblock %}
+
+
+

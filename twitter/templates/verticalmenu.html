@@ -1,0 +1,91 @@
+   {% load static %}
+    <nav class="sidenav">
+      {% if not user.is_authenticated %}
+        <a class="nav-link active" href="{% url 'home' %}"><i class="fa fa-hashtag" id="icons"></i> Explore</a>
+        <a class="nav-link" href="#"><i class="fa-regular fa-gear"></i> Setting</a>
+        {% else %}
+        <a class="nav-link" href="{% url 'home' %}"><i class="fa fa-home" id="icons"></i> Home</a>
+        <a class="nav-link" href="{% url 'explore' %}"><i class="fa fa-hashtag" id="icons"></i> Explore</a>
+        <a class="nav-link" href="{% url 'profile' request.user.id %}"><i class="fa-regular fa-user"></i> Profile</a>
+        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left:5px; padding-left: 30px; padding-right: 30px;
+        ">Tweet</button><br><br><br><br><br><br>
+        <div class="text-center d-flex justify-center align-items-centre " >
+          <div class="container">
+            {% if profile.profile_image %}
+							<img src="{{ profile.profile_image.url }}"  class="rounded-circle me-1" height="30" width="30" alt="myprofile" >
+							{% else %}
+							<img src="{% static 'images/default_profile_pic.png' %}" class="rounded-circle me-1" height="30" width="30" alt="myprofile">	
+							{% endif %}
+            <p> {{ user.first_name}} {{user.last_name }}<br>
+              <small> @ {{user.username}}</small></p>
+          </div>
+          </div>
+        <a class="nav-link" href="{% url 'logout' %}"><i class="fa-thin fa-right-from-bracket" id="icons"></i>Logout</a>
+
+        {% endif %}
+      </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">What's is Happening?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      {% if form %}
+      <form  method=POST enctype="multipart/form-data" >
+            <div class="modal-body">
+					{% csrf_token %}
+					{{ form.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary">Close</button>
+          <button type="submit" class="btn btn-primary">tweet</button>
+					</form>
+					{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <style>
+/* The sidebar menu */
+.sidenav {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 180px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 100; /* Stay at the top */
+  left: 0;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  padding-left: 25px;
+  margin-left: 70px;
+}
+
+/* The navigation menu links */
+.sidenav a, button {
+  padding: 6px 8px 10px 20px;
+  margin-bottom: 20px;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  background-color: #a894e6;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+      </style>
+  
