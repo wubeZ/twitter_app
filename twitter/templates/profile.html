@@ -54,7 +54,7 @@
 				{{ tweet.body }}<br/>
 				<ul class="breadcrumb" style="--bs-breadcrumb-divider: '';">
 					{% for hashtag in tweet.hashtags.all %}
-					  <li class="breadcrumb-item"> #{{ hashtag.name }}</li>
+					<li class="breadcrumb-item"> <a class="text-decoration-none" href="{% url 'search_hashtag' hashtag.name%}">#{{ hashtag.name }}</a></li>
 					{% endfor %}
 				  </ul><br/>
 				<small class="text-muted">
