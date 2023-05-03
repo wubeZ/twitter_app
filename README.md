@@ -22,6 +22,15 @@ This app currently supports the following features:
 - Search user by username
 - Search tweet by hashtag
 
+## Installation
+
+To run this app locally, you will need to follow these steps:
+
+1. Clone this repository using the command: `git clone https://github.com/wubeZ/twitter_app.git`
+2. Install the required dependencies using `pip install -r requirements.txt`
+3. Run the database migrations using the command `python manage.py migrate`
+4. Start the server using the command `python manage.py runserver`
+
 ## Screenshots
 
 ![Homepage, Comming Soon...](screenshots/homepage.png)
